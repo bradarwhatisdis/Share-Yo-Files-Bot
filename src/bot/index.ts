@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { conversations, createConversation } from '@grammyjs/conversations';
-import { throttle } from '@grammyjs/throttler';
+import { ratelimiter } from '@grammyjs/ratelimiter';
 import { config } from '../config/index.js';
 import { MyContext } from '../types/bot.js';
 import { authMiddleware } from './middleware/index.js';
@@ -20,7 +20,7 @@ export const bot = new Bot<MyContext>(config.telegram.botToken);
 // Middleware
 bot.use(session({ initial: () => ({}) }));
 bot.use(conversations());
-bot.use(throttle({ limit: 3, onLimitExceeded: (ctx) => ctx.reply('Terlalu cepat! Tunggu sebentar.') }));
+bot.use(ratelimiter({ timeFrame: 1000, limit: 3, onLimitExceeded: (ctx) => ctx.reply('Terlalu cepat! Tunggu sebentar.') }));
 
 // Auth middleware
 bot.use(authMiddleware);
